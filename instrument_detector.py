@@ -10,7 +10,7 @@ sys.path.append("../")
 import re
 import openai
 
-openai.api_key = "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" 
+openai.api_key = "" 
 proxy = {
 'http': 'http://127.0.0.1:7890',
 'https': 'http://127.0.0.1:7890'
