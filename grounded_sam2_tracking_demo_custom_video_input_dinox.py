@@ -18,16 +18,17 @@ from sam2.build_sam import build_sam2_video_predictor, build_sam2
 from sam2.sam2_image_predictor import SAM2ImagePredictor 
 from utils.track_utils import sample_points_from_masks
 from utils.video_utils import create_video_from_images
+from instrument_detector import get_instrument_category
 
 """
 Hyperparam for Ground and Tracking
 """
-VIDEO_PATH = "./assets/hippopotamus.mp4"
-TEXT_PROMPT = "hippopotamus."
-OUTPUT_VIDEO_PATH = "./hippopotamus_tracking_demo.mp4"
+VIDEO_PATH = "./notebooks/videos/pourwater.mp4"
+TEXT_PROMPT = "test tube. beaker."
+OUTPUT_VIDEO_PATH = "./outputs/grounded_sam2_dinox_demo/pourwater_res.mp4"
 SOURCE_VIDEO_FRAME_DIR = "./custom_video_frames"
 SAVE_TRACKING_RESULTS_DIR = "./tracking_results"
-API_TOKEN_FOR_DINOX = "Your API token"
+API_TOKEN_FOR_DINOX = "7956f36e628603116ef92c2aeb2d43c6"
 PROMPT_TYPE_FOR_VIDEO = "box" # choose from ["point", "box", "mask"]
 BOX_THRESHOLD = 0.2
 
@@ -80,10 +81,20 @@ frame_names = [
 ]
 frame_names.sort(key=lambda p: int(os.path.splitext(p)[0]))
 
+# get the first frame to gerenate the chemistry instrument category
+img_path = os.path.join(SOURCE_VIDEO_FRAME_DIR, frame_names[0])
+# cv2.imshow("frame", cv2.imread(img_path))
+TEXT_PROMPT = get_instrument_category(img_path)
+print("Chemistry instruments name:",TEXT_PROMPT)
+
+
 # init video predictor state
 inference_state = video_predictor.init_state(video_path=SOURCE_VIDEO_FRAME_DIR)
 
 ann_frame_idx = 0  # the frame index we interact with
+
+
+
 """
 Step 2: Prompt DINO-X with Cloud API for box coordinates
 """

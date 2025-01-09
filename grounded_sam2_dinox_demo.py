@@ -21,9 +21,9 @@ from sam2.sam2_image_predictor import SAM2ImagePredictor
 """
 Hyper parameters
 """
-API_TOKEN = "Your API token"
-TEXT_PROMPT = "car . building ."
-IMG_PATH = "notebooks/images/cars.jpg"
+API_TOKEN = "7956f36e628603116ef92c2aeb2d43c6"
+TEXT_PROMPT = "beaker. test tube."
+IMG_PATH = "notebooks/images/test2.jpg"
 SAM2_CHECKPOINT = "./checkpoints/sam2.1_hiera_large.pt"
 SAM2_MODEL_CONFIG = "configs/sam2.1/sam2.1_hiera_l.yaml"
 BOX_THRESHOLD = 0.2
