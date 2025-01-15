@@ -11,7 +11,7 @@ import re
 import openai
 import cv2
 
-openai.api_key = "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" 
+# openai.api_key = "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" 
 proxy = {
 'http': 'http://127.0.0.1:7890',
 'https': 'http://127.0.0.1:7890'
