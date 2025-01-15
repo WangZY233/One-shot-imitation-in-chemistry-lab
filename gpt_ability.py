@@ -11,7 +11,7 @@ import re
 import openai
 import cv2
 
-openai.api_key = "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" 
+openai.api_key = "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" 
 proxy = {
 'http': 'http://127.0.0.1:7890',
 'https': 'http://127.0.0.1:7890'
@@ -97,7 +97,7 @@ def get_movement(image_path):
     return reply
 
 if __name__ == '__main__':
-    SLECTED_FOLDER = "./selected_frames/testvideo"
+    SLECTED_FOLDER = "../Result_Video2Ro_Chem/selected_frames/stir3"
     frame_names = [
             p for p in os.listdir(SLECTED_FOLDER)
             if os.path.splitext(p)[-1] in [".jpg", ".jpeg", ".JPG", ".JPEG"]

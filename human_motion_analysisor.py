@@ -57,21 +57,25 @@ class human_motion_analysisor():
         """
         Hyperparam for Ground and Tracking
         """
-        self.VIDEO_PATH = "../Result_Video2Ro_Chem/notebooks/videos/testvideo.mp4"
+        video_name = "stir3"
+        self.VIDEO_PATH = "../Result_Video2Ro_Chem/input/videos/" + video_name + ".mp4"
         self.TEXT_PROMPT = "test tube. beaker."
-        self.OUTPUT_VIDEO_PATH = "../Result_Video2Ro_Chem/outputs/grounded_sam2_dinox_demo/testvideo_res.mp4"
-        self.SOURCE_VIDEO_FRAME_DIR = "../Result_Video2Ro_Chem/custom_video_frames/testvideo"
-        self.SAVE_TRACKING_RESULTS_DIR = "../Result_Video2Ro_Chem/tracking_results/testvideo"
+        self.OUTPUT_VIDEO_PATH = "../Result_Video2Ro_Chem/outputs/grounded_sam2_dinox_demo/" + video_name + "_res.mp4"
+        self.SOURCE_VIDEO_FRAME_DIR = "../Result_Video2Ro_Chem/custom_video_frames/"+ video_name
+        self.SAVE_TRACKING_RESULTS_DIR = "../Result_Video2Ro_Chem/tracking_results/"+ video_name
         self.API_TOKEN_FOR_DINOX = "7956f36e628603116ef92c2aeb2d43c6"
         self.PROMPT_TYPE_FOR_VIDEO = "box" # choose from ["point", "box", "mask"]
         self.BOX_THRESHOLD = 0.2
 
-        self.SLECTED_FOLDER = "../Result_Video2Ro_Chem/selected_frames/testvideo"
-        self.BASE_FOLDER = Path("../Result_Video2Ro_Chem/speed_curve")
+        self.SLECTED_FOLDER = "../Result_Video2Ro_Chem/selected_frames/"+ video_name
+        self.BASE_FOLDER = Path("../Result_Video2Ro_Chem/speed_curve/"+ video_name)
+        self.PLOT_FOLDER = "../Result_Video2Ro_Chem/plot/"+ video_name
         if not os.path.exists(self.SLECTED_FOLDER):
             os.makedirs(self.SLECTED_FOLDER)
         if not os.path.exists(self.BASE_FOLDER):
             os.makedirs(self.BASE_FOLDER)
+        if not os.path.exists(self.PLOT_FOLDER):
+            os.makedirs(self.PLOT_FOLDER)
 
     def analyze_frame(self):
         '''
@@ -98,8 +102,8 @@ class human_motion_analysisor():
         self.HandLandmarker = mp.tasks.vision.HandLandmarker
         HandLandmarkerOptions = mp.tasks.vision.HandLandmarkerOptions
         VisionRunningMode = mp.tasks.vision.RunningMode
-        num_frame = len(self.frame_names)
-        self.all_landmark_pos = {"Right": np.zeros((num_frame, 2)), "Left": np.zeros((num_frame, 2))}
+        self.num_frame = len(self.frame_names)
+        self.all_landmark_pos = {"Right": np.zeros((self.num_frame, 2)), "Left": np.zeros((self.num_frame, 2))}
 
         # Create a hand landmarker instance with the video mode:
         self.mp_hand_options = HandLandmarkerOptions(
@@ -349,7 +353,7 @@ class human_motion_analysisor():
 
         for handedness in self.all_possible_handedness:
             print(f"Calculating the speed curve of the {handedness} hand.")
-            print(f"all the landmark pos: {self.all_landmark_pos[handedness]}")
+            # print(f"all the landmark pos: {self.all_landmark_pos[handedness]}")
             self.all_speeds[handedness] = get_hand_speed(self.all_landmark_pos[handedness])
             # print(f"Plotting the speed curve of the {handedness} hand.")
             # self.plot_speed(self.all_speeds[handedness], handedness)
@@ -369,6 +373,11 @@ class human_motion_analysisor():
         for i in range(len(valleys)):
             if i == 0 or (valleys[i] - selected_valleys[-1]) >= 15:
                 selected_valleys.append(valleys[i])
+
+        print(f"Plotting and making videos with smoothed {self.handedness} hand speed curve.")
+        self._plot_speed(speeds=smoothed_curve, 
+                        handedness=f'Smoothed {self.handedness}',
+                        selected_frame=selected_valleys)
         
         # Save the selected valley frames
         img = cv2.imread(os.path.join(self.SOURCE_VIDEO_FRAME_DIR, self.frame_names[0]))
@@ -425,7 +434,7 @@ class human_motion_analysisor():
         y_interpolated[nans] = np.interp(x_nans(nans), x_nans(~nans), y[~nans])
 
         # Gaussian filter smoothing 
-        y_smoothed = gaussian_filter(y_interpolated, sigma=5)
+        y_smoothed = gaussian_filter(y_interpolated, sigma=10)
 
         return y_smoothed
 
@@ -448,7 +457,7 @@ class human_motion_analysisor():
                 plt.scatter(selected_frame, speeds[selected_frame], color='blue', label=f'Selected Frame {selected_frame}')
             plt.scatter(i, speeds[i], color='red', label=f'Current {handedness} Hand')
             plt.legend()
-            plt.savefig(f'{str(self.plot_folder)}/{i}_{handedness}.jpg')
+            plt.savefig(f'{str(self.PLOT_FOLDER)}/{i}_{handedness}.jpg')
             plt.close()
 
 
@@ -456,7 +465,7 @@ class human_motion_analysisor():
         """
         Step 6: Convert the annotated frames to video
         """
-        create_video_from_images(self.SAVE_TRACKING_RESULTS_DIR, self.OUTPUT_VIDEO_PATH)
+        create_video_from_images(self.SAVE_TRACKING_RESULTS_DIR, self.PLOT_FOLDER, self.OUTPUT_VIDEO_PATH)
 
 
 def main():

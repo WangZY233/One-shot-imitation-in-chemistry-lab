@@ -263,6 +263,23 @@ def load_video_frames_from_jpg_images(
             compute_device,
         )
         return lazy_images, lazy_images.video_height, lazy_images.video_width
+    # # ...existing code...
+    # images = torch.zeros(num_frames, 3, image_size, image_size, dtype=torch.float32)
+    # batch_size = 100  # 根据你的 GPU 内存调整批处理大小
+    # for i in range(0, num_frames, batch_size):
+    #     batch_paths = img_paths[i:i + batch_size]
+    #     for n, img_path in enumerate(tqdm(batch_paths, desc="frame loading (JPEG)")):
+    #         images[i + n], video_height, video_width = _load_img_as_tensor(img_path, image_size)
+    #         images = images.to(compute_device)
+    #     if not offload_video_to_cpu:
+    #         images[i:i + batch_size] = images[i:i + batch_size].to(compute_device)
+    # if not offload_video_to_cpu:
+    #     img_mean = img_mean.to(compute_device)
+    #     img_std = img_std.to(compute_device)
+    # # normalize by mean and std
+    # images -= img_mean
+    # images /= img_std
+    # return images, video_height, video_width
 
     images = torch.zeros(num_frames, 3, image_size, image_size, dtype=torch.float32)
     for n, img_path in enumerate(tqdm(img_paths, desc="frame loading (JPEG)")):

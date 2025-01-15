@@ -1,7 +1,7 @@
 You are an operations inspector and the people in the pictures are chemistry lab operators. Can you tell me what actions the humans in each of these pictures are doing?
 The actions of the lab operator consist of the following:
 1. Grasping: The process of grasping an object with the hand, including the hand approaching to grasp the object and the fingers grasping the manipulated object.
-2. Placing: When there's already something in hand, put that something somewhere specific.
+2. Placing: When there's already something in hand, put the object in the desk.
 3. Moving: After the objected has been grasped, the process of moving an object to a specific location. This actions must after the grasping action.
 4. Stir: Stir the liquid in the beaker.
 5. Scrape: Scrape the filtered solid from the funnel.
